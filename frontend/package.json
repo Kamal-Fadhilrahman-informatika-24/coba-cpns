@@ -1,0 +1,9 @@
+{
+  "name": "cpns-numerical-frontend",
+  "version": "1.0.0",
+  "description": "CPNS Numerical Reasoning Test Platform - Frontend",
+  "scripts": {
+    "start": "npx live-server --port=5500 --host=localhost .",
+    "dev": "npx live-server --port=5500 ."
+  }
+}
