@@ -3,7 +3,7 @@
  * All logic lives on the backend. This file only sends requests and returns responses.
  */
 
-const API_BASE = window.APP_CONFIG?.API_URL || 'http://localhost:3001/api';
+const API_BASE = window.APP_CONFIG?.API_URL || '';
 
 class ApiService {
   constructor() {

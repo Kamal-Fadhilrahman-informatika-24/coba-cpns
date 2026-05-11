@@ -3,7 +3,7 @@
  * Frontend has NO game logic — only emits events and reacts to server events.
  */
 
-const SOCKET_URL = window.APP_CONFIG?.SOCKET_URL || 'http://localhost:3001';
+const SOCKET_URL = window.APP_CONFIG?.SOCKET_URL || '';
 
 class SocketService {
   constructor() {

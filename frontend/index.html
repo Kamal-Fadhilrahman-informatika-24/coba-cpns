@@ -1645,7 +1645,7 @@
   <div class="page active" id="page-home">
     <div class="hero">
       <div class="hero-badge">🎯 Platform Simulasi CPNS #1</div>
-      <h1>Siapkan dirimu untuk <span class="highlight">CPNS 2025</span></h1>
+      <h1>Siapkan dirimu untuk <span class="highlight">CPNS 2026</span></h1>
       <p>Latih kemampuan numerik dengan soal adaptif, pantau perkembanganmu, dan bersaing langsung dengan peserta lain di seluruh Indonesia.</p>
       <div class="hero-cta">
         <button class="btn btn-primary" onclick="showPage('simulation'); Sound.click()">
@@ -1971,7 +1971,7 @@
 /* ══════════════════════════════════════════════════════════
    CONSTANTS
 ══════════════════════════════════════════════════════════ */
-const BACKEND = 'http://localhost:3001';
+const BACKEND = '';
 const SUPABASE_URL = 'https://vbaqpreidaszlgeklmzq.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiYXFwcmVpZGFzemxnZWtsbXpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNDgwMzYsImV4cCI6MjA5MjkyNDAzNn0.Xc5fAx3npuyS83A_YXF6OTytPgr6Ryd3bD_UX3SjT9s';
 
@@ -2298,13 +2298,19 @@ async function handleGoogleRedirect() {
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return false;
-    const data = await apiFetch('/api/auth/google', {
-      method: 'POST',
-      body: JSON.stringify({ access_token: session.access_token })
-    });
-    setToken(data.token);
-    setCurrentUser(data.user);
-    window.history.replaceState({}, document.title, window.location.pathname);
+const user = session.user;
+
+saveUser(user);
+notifyListeners(user);
+
+return user;
+  const { data, error } = await apiFetch('/api/auth/me', {
+    method: 'POST',
+    body: JSON.stringify({ access_token: session.access_token })
+  });
+  setToken(data.token);
+  setCurrentUser(data.user);
+  window.history.replaceState({}, document.title, window.location.pathname);
     showToast('✅ Login Google berhasil!', 'success');
     Sound.matchFound();
     return true;
@@ -2369,9 +2375,10 @@ async function doLogin() {
   btn.disabled = true; btn.textContent = 'Memproses...';
   errEl.style.display = 'none';
   try {
-    const data = await apiFetch('/api/auth/login', {
-      method: 'POST', body: JSON.stringify({ email, password })
-    });
+    const { data, error } = await sb.auth.signInWithPassword({
+  email,
+  password
+});
     setToken(data.token);
     setCurrentUser(data.user);
     closeModal();
@@ -2400,9 +2407,10 @@ async function doRegister() {
   btn.disabled = true; btn.textContent = 'Membuat akun...';
   errEl.style.display = 'none'; sucEl.style.display = 'none';
   try {
-    const data = await apiFetch('/api/auth/register', {
-      method: 'POST', body: JSON.stringify({ username, email, password })
-    });
+    const { data, error } = await sb.auth.signUp({
+  email,
+  password
+});
     setToken(data.token);
     setCurrentUser(data.user);
     sucEl.textContent = 'Akun berhasil dibuat!'; sucEl.style.display = 'block';

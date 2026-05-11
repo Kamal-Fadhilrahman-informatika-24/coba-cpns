@@ -4,7 +4,7 @@
 
 const SUPABASE_URL = 'https://vbaqpreidaszlgeklmzq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiYXFwcmVpZGFzemxnZWtsbXpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNDgwMzYsImV4cCI6MjA5MjkyNDAzNn0.Xc5fAx3npuyS83A_YXF6OTytPgr6Ryd3bD_UX3SjT9s';
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = '';
 
 export { BACKEND_URL };
 
@@ -87,9 +87,9 @@ export async function apiFetch(path, options = {}) {
 // ─── Email auth ───────────────────────────────────────────────────────────
 
 export async function loginWithEmail(email, password) {
-  const data = await apiFetch('/api/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password })
+  const data = await sb.auth.signInWithPassword({
+    email,
+    password
   });
   saveToken(data.token);
   saveUser(data.user);
@@ -98,9 +98,10 @@ export async function loginWithEmail(email, password) {
 }
 
 export async function registerWithEmail(username, email, password) {
-  const data = await apiFetch('/api/auth/register', {
-    method: 'POST',
-    body: JSON.stringify({ username, email, password })
+  const data = await sb.auth.signUp({
+    username,
+    email,
+    password
   });
   saveToken(data.token);
   saveUser(data.user);
@@ -134,10 +135,14 @@ export async function handleGoogleCallback() {
   const access_token = session.access_token;
 
   // Exchange with our backend
-  const data = await apiFetch('/api/auth/google', {
-    method: 'POST',
+const user = session.user;
+
+saveUser(user);
+notifyListeners(user);
+
+return user;
     body: JSON.stringify({ access_token })
-  });
+  };
 
   saveToken(data.token);
   saveUser(data.user);
